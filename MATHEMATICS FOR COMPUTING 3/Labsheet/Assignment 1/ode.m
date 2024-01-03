@@ -16,3 +16,10 @@ function odedsolve()
     y = subs(soln(1));
     hold on; plot(x, y, '.r');
 end
+
+function odeode45()
+    xrange = [1 1.5];
+    y0 = 1;
+    [x, y] = ode45()
+
+end
