@@ -1,7 +1,0 @@
-e = 2.718;
-f1 = @(x)x*log10(x); %base 10
-f2 = @(x)x*log(x); %base e (natural log)
-
-fplot(diff(f1), [0 10]);
-hold on
-fplot(diffdiff(f2), [0 10]);
