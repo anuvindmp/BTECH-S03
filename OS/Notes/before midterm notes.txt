@@ -1,0 +1,274 @@
+Firmware : stored in non volatile(ROM) memory in specific hardware components such as bios or firmware 
+* components of comp system : firmware, data, users
+
+modes of operation  user mode system mode mode bit 
+system calls
+time sharing
+booting
+program access primary memory secondary memory
+IO operations Interrupts
+IO protection
+CPU protection
+OS components (proccess manage, main mem manage, file manage, IO system manage, secodry mem manage, comms, protection system, command interpreter)
+OS services	user services resource services
+job scheduling
+LTS MTS STS dispatcher proccess cycle
+proccess states
+procccess control block
+FCFS time quanta
+SJF
+priority scheduling
+context switching
+Multilevel feedback Queue scheduling
+RR
+SRTF
+preemptive priority scheduling
+concurrent proccessing
+proccess cycle -> entry critical remainder exit
+procces synchronization
+petersons algorithm
+semaphore wait signal binary counting
+race condition
+mutual exclusion
+deadlock
+progress
+bounded waiting
+starvation
+
+
+
+os goals:
+User convenience
+efficient operation of computer systems
+
+mainframe systems
+batch systems -> runs only 1 program -> main task
+time shared systems -> user is allowed to work on the machine -> both systems commands and users can coexist in the same environment
+
+A program loaded into memory and is executed is commonly referred to as a program
+
+
+virtual memory-> some programs might be larger than the RAM itself such as OS, technically loading OS into RAM is not possible, but made possible using VRAM which stores the address from the secondary memory and only loads the kernel program into the RAM so it is easier for memory storage limitation management
+physical memory vs logical memory
+RAM vs VRAM -> paging
+
+
+cpu utilization was low even while introducing Multiprogramming in a time shared system
+average user might hit 7 keys in a second which might be fast for humans but incredibly slow for cpus, so between each keystroke instead of waiting for the IO operations, the cpu switched to other proccess while saving the content of the current proccess when the time is up the changed proccess's progress is stored and the main IO operation's data is loaded back up
+-> this is called context switching
+
+A modern general purpose computer consists of a cpu and a number of device controllers that are connected through a common bus that provides access to shared memory
+Each device controller is in charge of a specific type of device like disk drivers audio devices and video displays
+The cpu and device controllers can execute concurrently competing for memory cycles -> memory controller
+
+Booting: when a system is powered up or rebooted, it needs to have an initial program to run, This initial program is called bootstrap program
+it is stored in Read Only Memory (ROM) as a firmware or in EEPROM
+it initializes all aspects of the systems like cpu registers to device controllers to memory contents
+The bootstrap program must know how to load the operating system and start executing that system
+it must locate and load into memory the os kernel which then executes the init ans waits for events to occur
+
+An event is signalled by an interrupt either from the hardware or software at any time by sending a signal to the cpu using the way of the system bus by executing a special operation called system calls or a monitor call
+modern operating system are interrupt driven
+after IO operation has started -> 2 possible states
+=> IO is started -> IO completion -> control returned to user process => This is called synchronous IO
+-> (waiting for IO operations may be accomplished by a wait instruction -> LOOP: JMP LOOP)
+=> Io is started -> return control to user without waiting for IO completion -> IO can continue while other system operations occur => asynchronous IO
+-> if no user programs are running and the OS has no other work to do, we still require the wait instruction or idle loop
+-> Interrupt Vector Table stores all the base addresses of Interrupt programs of various devices indexed using a unique device number
+-> stored usually in low address locations (0 - 100 locations)
+-> when a new interrupt occurs, it can be easily refferenced from the Interrupt vector table
+
+
+Main memory
+RAM -> Random Access memory
+DRAM -> dynamic random access memory => uses semiconductors so it can directly access from cpu thus making it dynamic
+Load and store instructions
+array of memory words has its own addresses instruction counter indexing indirection
+=> Main memory is too small to store all the neccessary programs and data permanently
+=> Volatilr storage devices that loses its content when power turns off otherwise lost
+-> need for larger and permanent secondary storage -> HDD SSD
+hard disk drive solid state drives
+magnetic disks
+-> creates a need for disk management
+-> cpu can directly access the registers inside and DRAMs
+called direct access storage devices -> programs can use memory address but not disk address -> so any data not on these storage needs to be moves
+-> to make it conveniet many IO uses Memory mapped IOs
+
+Dual Mode operation
+-> provides protection to os from users
+  => user mode
+  => monitor mode supervisor mode system mode priveleged mode kernel mode
+mode bit: used to differenctiate between modes -> kernel(0) user(1)
+at booting -> systems starts in kernel mode -> then os is loaded and start user proccesses in user mode -> whenever an interrupt occurs -> switch to kernel mode
+-> privileged instructions are banned from user mode if tries to execute in user mode the hardware will trap the instruction and send it to the os
+-> to execute a privileged instructions -> user requests os -> as a system call or monitor call or os function call
+-> "To prevent users from performing illegal IO, we define all IO instructions to be privileged instructions. Thus users cannot issue IO instructions directly, they must do it through the operating system. For IO protection to be complete, we must be sure that a user can never gain control of the computer in kernel mode. If it could, IO protection could be compromised"
+
+
+cpu protection
+must ensure OS gets control
+must prevent user program from getting stuck in an infinite loop or not calling system services or never returning control to OS
+-> use a timer, which specifies to interrupt the computer after a specified slice of time
+-> before the next user gets the chance for cpu the OS does some Housekeeping tasks such as updation of N (Time Quanta) for that proccess according to how much it has executed, and saves registers, internal variables, buffers and other parameters to prepare for the next run of proccess on the cpu, This proccess is called as context switching
+
+
+OS components:
+-> Main memory management
+-> File management
+-> IO management
+-> Disk Management
+-> Networking
+-> Protection
+-> Command line interpreter -> interface between the user and the Operating system
+CMLI (command line interpreter) is included in kernel in win. In UNIX based systems it is run when a job is initiated
+control card interpreter or command line interpreter or shell
+get command statements and execute it
+
+
+OS services
+-> program execution
+-> file system manipulation
+-> communication
+-> error detection
+-> resource allocation
+-> accounting
+-> protection
+
+
+system calls
+-> provide an interface between a proccess and the operating system
+-> generally available as assembly language instructions and usually listed in various manuals
+
+users -> shells -> CMLI -> system call interface -> kernel -> OS services
+
+
+proccess states
+new -> ready -> waiting -> running -> terminated
+
+process control block
+Each process is represented in the OS by a process control block(PCB) also called a task control block
+-> contains information such as pointer, process state, process number, program counter, registers, memory limits, list of open files, Accounting info, IO status
+program counter -> address of next instruction
+
+to maximize CPU utilization. The objective of time-sharing is to switch the CPU among processes so frequently that users can interact with each program while it is running
+
+As processes enter the system, they are put into a job queue. This queue consists of all processes in the system. The processes that are residing in main memory and are ready and waiting to execute are kept on a list called the ready queue. This queue is generally stored as a linked list. A ready-queue header contains pointers to the first and final PCBs in the list. We extend each PCB to include a pointer field that points to the next PCB in the ready queue
+
+e busy with the I/O request of some other process. The process therefore may have to wait for the disk. The list of processes waiting for a particular I/O device is called a device queue. Each device has its own device queue
+
+• The process could issue an I/O request, and then be placed in an I/O queue. 
+• The process could create a new subprocess and wait for its termination. 
+• The process could be removed forcibly from the CPU, as a result of an interrupt, and be put back in the ready queue. 
+
+The selection process is carried out by the appropriate scheduler
+
+In a batch system, often more processes are submitted than can be executed immediately. These processes are spooled to a mass-storage device (typically a disk), where they are kept for later execution. The long-term scheduler, or job scheduler, selects processes from this pool and loads them into memory for execution. The short-term scheduler, or CPU scheduler, selects from among the processes that are ready to execute, and allocates the CPU to one of them
+
+the short-term scheduler must be fast.
+
+
+The long-term scheduler, on the other hand, executes much less frequently. There may be minutes between the creation of new processes in the system. The long-term scheduler controls the degree of multiprogramming-the number of processes in memory. If the degree of multiprogramming is stable, then the average rate of process creation must be equal to the average departure rate of processes leaving the system. Thus, the long-term scheduler may need to be invoked only when a process leaves the system. Because of the longer interval between executions, the long-term scheduler can afford to take more time to select a process for execution
+
+An io-bound process spends more of its time doing I/O than it spends doing computations. A CPU-bound process, on the other hand, generates I/O requests infrequently, using more of its time doing computation than an I/O-bound process uses. The long-term scheduler should select a good process mix of I/O-bound and CPU-bound processes.
+
+
+The system with the best performance will have a combination of CPU-bound and I/O-bound processes.
+
+
+On some systems, the long-term scheduler may be absent or minimal. Thus a medium term scheduler is needed to do the job
+medium-term scheduler removes processes from memory (and from active contention for the CPU), and thus reduces the degree of multiprogramming. At some later time, the process can be r  reintroduced into memory and its execution can be continued where it left off. This scheme is called swapping. The process is swapped out, and is later swapped in, by the medium-term scheduler. Swapping may be necessary to improve the process mix, or because a change in memory requirements has overcommitted available memory
+
+
+Switching the CPU to another process requires saving the state of the old process and loading the saved state for the new process. This task is known as a context switch. The context of a process is represented in the PCB of a process; it includes the value of the CPU registers, the process state, and memory-management information. When a context switch occurs, the kernel saves the context of the old process in its PCB and loads the saved context of the new process scheduled to run. Context-switch time is pure overhead, because the system does no useful work while switching. Its speed varies from machine to machine, depending on the memory speed, the number of registers that must be copied, and the existence of special instructions (such as a single instruction to load or store all registers).
+
+A process may create several new processes, via a create-process system call, during the course of execution. The creating process is called a parent process, whereas the new processes are called the children of that process. Each of these new processes may in turn create other processes, forming a tree of processes
+
+When a process creates a new process, two possibilities exist in terms of execution: 
+1. The parent continues to execute concurrently with its children. 
+2. The parent waits until some or all of its children have terminated.
+
+There are also two possibilities in terms of the address space of the new process: 
+1. The child process is a duplicate of the parent process. 
+2. The child process has a program loaded into it. 
+
+
+A process terminates when it finishes executing its final statement and asks the operating system to delete it by using the exit system call. At that point, the process may return data (output) to its parent process (via the wait system call). All the resources of the process-including physical and virtual memory, open files, and 1/0 buffers-are deallocated by the operating system
+
+CPU-io Burst Cycle 
+The success of CPU scheduling depends on the following observed property of processes: Process execution consists of a cycle of CPU execution and I/O wait. Processes alternate between these two states. Process execution begins with a CPU burst. That is followed by an 110 burst, then another CPU burst, then another I/O burst, and so on. Eventually, the last CPU burst will end with a system request to terminate execution, rather than with another I/O burst
+
+Whenever the CPU becomes idle, the operating system must select one of the processes in the ready queue to be executed. The selection process is carried out by the short-term scheduler (or CPU scheduler). The scheduler selects from among the processes in memory that are ready to execute, and allocates the CPU to one of them. 
+
+1. When a process switches from the running state to the waiting state (for example, I/O request, or invocation of wait for the termination of one of the child processes) 
+2. When a process switches from the running state to the ready state (for example, when an interrupt occurs) 
+3. When a process switches from the waiting state to the ready state (for example, completion of I/O) 
+4. When a process terminates 
+In circumstances 1 and 4, there is no choice in terms of scheduling. A new 
+process (if one exists in the ready queue) must be selected for execution. There is a choice -> non preemptive
+
+Preemptive drawback
+Unfortunately, preemptive scheduling incurs a cost. Consider the case of two processes sharing data. One may be in the midst of updating the data when it is preempted and the second process is run. The second process may try to read the data, which are currently in an inconsistent state. New mechanisms thus are needed to coordinate access to shared data
+
+The dispatcher is the module that gives control of the CPU to the process selected by the short-term scheduler. This function involves: 
+• Switching context 
+• Switching to user mode 
+• Jumping to the proper location in the user program to restart that program
+The time it takes for the dispatcher to stop one process and start another running is known as the dispatch latency. 
+
+
+By far the simplest CPU-scheduling algorithm is the first-come, first-served (FCFS) scheduling algorithm. With this scheme, the process that requests the CPU first is allocated the CPU first. The implementation of the FCFS policy is easily managed with a FIFO queue. When a process enters the ready queue, its PCB is linked onto the tail of the queue. When the CPU is free, it is allocated to the process at the head of the queue.
+
+There is a convoy effect, as all the other processes wait for the one big process to get off the CPU. This effect results in lower CPU and device utilization than might be possible if the shorter processes were allowed to go first.
+
+A different approach to CPU scheduling is the shortest-job-first (SJF) scheduling algorithm. This algorithm associates with each process the length of the latter's next CPU burst. When the CPU is available, it is assigned to the process that has the smallest next CPU burst. If two processes have the same length next CPU burst, FCFS scheduling is used to break the tie. Note that a more appropriate term would be the shortest next CPU burst, because the scheduling is done by examining the length of the next CPU burst of a process, rather than 
+its total length
+SJF is optimal
+
+The real difficulty with the SJF algorithm is knowing the length of the next CPU request. For long-term (or job) scheduling in a batch system, we can use as the length the process time limit that a user specifies when he submits the job. 
+
+SJF scheduling is used frequently in long-term scheduling. 
+There is no way to know the length of the next CPU burst
+Preemptive SJF scheduling is sometimes called shortest-remaining-time-first scheduling
+
+The SJF algorithm is a special case of the general priority-scheduling algorithm. A priority is associated with each process, and the CPU is allocated to the process with the highest priority. Equal-priority processes are scheduled in FCFS order.
+The larger the CPU burst, the lower the priority
+Priority scheduling can be either preemptive or nonpreemptive
+
+A nonpreemptive priority-scheduling algorithm will simply put the new process at the head of the ready queue. A major problem with priority-scheduling algorithms is indefinite blocking (or starvation). A process that is ready to run but lacking the CPU can be considered blocked-waiting for the CPU. A priority-scheduling algorithm can leave some low-priority processes waiting indefinitely for the CPU. In a heavily loaded computer system, a steady stream of higher-priority processes can prevent a low-priority process from ever getting the CPU
+
+A solution to the problem of indefinite blockage of low-priority processes is aging. Aging is a technique of gradually increasing the priority of processes that wait in the system for a long time
+
+The round-robin (RR) scheduling algorithm is designed especially for time sharing systems. It is similar to FCFS scheduling, but preemption is added to switch between processes. A small unit of time, called a time quantum (or time slice), is defined. A time quantum is generally from 10 to 100 milliseconds. The ready queue is treated as a circular queue
+
+Another class of scheduling algorithms has been created for situations in which processes are easily classified into different groups. For example, a common division is made between  foreground (or interactive) processes and background (or batch) processes. These two types of processes have different response-time requirements, and so might have different scheduling needs. In addition, foreground processes may have priority (or externally defined) over background processes. A multilevel queue-scheduling algorithm partitions the ready queue into 
+several separate queues. The processes are permanently assigned to one queue, generally based on some property of the process, such as memory size, process priority, or process type. Each queue has its own scheduling algorithm
+
+Normally, in a multilevel queue-scheduling algorithm, processes are permanently assigned to a queue on entry to the system. Processes do not move between queues. If there are separate queues for foreground and background processes, for example, processes do not move from one queue to the other, since processes do not change their foreground or background nature. This 
+setup has the advantage of low scheduling overhead, but the disadvantage of being inflexible. Multilevel feedback queue scheduling, however, allows a process to move between queues. The idea is to separate processes with different CPU-burst characteristics. If a process uses too much CPU time, it will be moved to a lower-priority queue. This scheme leaves I/O-bound and interactive processes in the higher-priority queues. Similarly, a process that waits too long in a lower priority queue may be moved to a higher-priority queue. This form of aging prevents starvation. 
+
+where several processes access and manipulate the same data concurrently and the outcome of the execution depends on the particular order in which the access takes place, is called a race condition. To guard against the race condition above, we need to ensure that only one process at a time can be manipulating the variable counter. To make such a guarantee, we require some form of synchronization of the processes. Such situations occur frequently in operating systems as different parts of the system manipulate resources and we want the changes not to interfere with one another. A major portion of this chapter is concerned with the issue of process synchronization and coordination. 
+
+
+Each process has a segment of code, called a critical section, in which the process may be changing common variables, updating a table, writing a file, and so on. The important feature of the system is that, when one process is executing in its critical section, no other process is to be allowed to execute in its critical section. Thus, the execution of critical sections by the processes is mutually exclusive
+
+Each process must request permission to enter its critical section. The section of code implementing this request is the entry section. The critical section may be followed by an exit section. The remaining code is the remainder section
+
+1. Mutual Exclusion: If process Pi is executing in its critical section, then no other processes can be executing in their critical sections. 
+2. Progress: If no process is executing in its critical section and some processes wish to enter their critical sections, then only those processes that are not executing in their remainder section can participate in the decision on which will enter its critical section next, and this selection cannot be postponed indefinitely. 
+3. Bounded Waiting: There exists a bound on the number of times that other processes are allowed to enter their critical sections after a process has made a request to enter its critical section and before that request is granted. 
+
+develop an algorithm for solving the critical-section problem for n processes. This algorithm is known as the bakery algorithm, and it is based on a scheduling algorithm commonly used in bakeries, ice-cream stores, deli counters, motor-vehicle registries, and other locations where order must be made out of chaos. This algorithm was developed for a distributed environment, but at this point we are concerned with only those aspects of the algorithm that pertain to a centralized environment. On entering the store, each customer receives a number. The customer with the lowest number is served next. Unfortunately, the bakery algorithm cannot guarantee that two processes (customers) do not receive the same number. In the case of a tie, the process with the lowest name is served first
+
+a synchronization tool called a semaphore. A semaphore S is an integer variable that, apart from initialization, is accessed only through two standard atomic operations: wait and signal. These operations were originally termed P (for wait) and V (for signal)
+when one process modifies the semaphore value, no other process can simultaneously modify that same semaphore value.
+We can use semaphores to deal with the n-process critical-section problem. The n processes share a semaphore, mutex (standing for mutual exclusion)
+
+
+The main disadvantage of the mutual-exclusion solutions, and of the semaphore definition given here, is that they all require busy waiting. While a process is in its critical section, any other process that tries to enter its critical section must loop continuously in the entry code.
+Busy waiting wastes CPU cycles that some other process might be able to use productively. This type of semaphore is also called a spinlock (because the process "spins" while waiting for the lock). Spinlocks are useful in multiprocessor systems. The advantage of a spinlock is that no context switch is required when a process must wait on a lock, and a context switch may take considerable time. Thus, when locks are expected to be held for short times, spinlocks are useful.
+
+The implementation of a semaphore with a waiting queue may result in a situation where two or more processes are waiting indefinitely for an event that can be caused only by one of the waiting processes. The event in question is the execution of a signal operation. When such a state is reached, these processes are said to be deadlocked. 
+Another problem related to deadlocks is indefinite blocking or starvation, a situation where processes wait indefinitely within the semaphore. Indefinite blocking may occur if we add and remove processes from the list associated with a semaphore in LIFO order.
+
+
+counting semaphore, since its integer value can range over an unrestricted domain. A binary semaphore is a semaphore with an integer value that can range only between 0 and 1. A binary semaphore can be simpler to implement than a counting semaphore
