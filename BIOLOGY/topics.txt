@@ -1,0 +1,101 @@
+1. Silicon based life
+2. Biomolecule classification
+   -carbo, lipids, proteins, nucleic acid
+3. phosphate + sugar + base
+4. RNA , DNA
+5. protein = amino grp + carboxyl grp + R grp + H
+6. enzymes
+7. Cell classification
+8. Organelles
+9. Mitosis 
+10. meiosis
+11. cell nucleus
+Genome 
+igr 
+Repeated sequence 
+alleles
+Watson Creek model 
+chargaff rule
+Functions of DNA and RNA
+Types of RNA
+Codon anti codon
+Central dogma
+Proteins synthesis
+DNA replication
+Transcription
+Translation
+oric
+DNA helicase
+Initiation elongation termination
+Replication Fork
+Primer binding
+Primase
+DNA polymerase
+Leading strand and lagging strand
+okasaki fragment
+Exonuclease
+Dna ligase
+telomerase
+Non coding sequence
+Circular chromosomes
+DNAA box And dnaa protein
+gene therapy
+Viral vectors 
+immunodeficiency disorder
+Frost resistant tomatoes
+Pesticide resistant corn
+Oric in vibrio cholera
+Hidden message problem
+Frequent words problem
+Reverse compliment problem
+Pattern matching problem
+Clumb finding problem
+Asymmetric DNA replication
+Deamination
+Skew problem
+Minimum skew problem
+Hamming distance problem
+Complication in oric prediction
+Circadian clock
+Delayed sleep phase syndrome
+Gene expression
+TOC1, cca1, lcy
+Transcription factor
+Motif
+Regulatory proteins
+Motif finding problem
+Implanted motifs problem
+The brute force method
+Scoring motifs
+Count Matrix
+profile matrix
+Consensus string
+Entropy
+Motif logo
+Greedy motif search
+Profile most probable kmer
+Pseudo count problem
+Cromwell's rule
+Laplace rule of succession
+Randomised motif search
+Monte Carlo algorithm
+Gibbs sampling
+Profile randomly generated kmer
+Probability of Kmer in a text
+Overlapping words paradox
+Binomial coefficient
+Chaos theory
+Fractals
+Chaos game representation
+Serpinski's triangle
+Square shaped CGR
+Cgr in genetic sequence
+Double scoop pattern in human genome
+CGR for sequence comparison
+Frequency chaos game representation
+FCGR Probability Matrix
+Cgr centroid method
+Fcgr probability matrix distance
+Cgr centroid distance
+Hierarchical agglomerative clustering
+
